@@ -23,3 +23,8 @@ In addition, we consider two different modes for the game:
 
 - Solitaire (1-player): One player takes as many rounds as needed to reach the goal, with the aim of minimizing the number of rounds needed.
 - Competitive (n-player): 
+
+## Questions
+
+For Solitaire Play:
+- As a function of n, g, h, and b, what are the optimal policies for minimizing the expected number of turns needed?
