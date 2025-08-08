@@ -104,6 +104,29 @@ def sum_thresh(x):
         else: return("STAY")
     return(f)
 
+def ev_thresh_no_memory(x):
+    def f(deck, hand, goal, n, points):
+        fake_deck = make_deck(n)
+        for card in hand:
+            fake_deck.remove(card)
+        if sum([card for card in fake_deck if card not in hand]) / len(fake_deck) > x: return("HIT")
+        else: return("STAY")
+    return(f)
+
+def ev_thresh_with_memory(x):
+    def f(deck, hand, goal, n, points):
+        if len(deck) == 0:
+            fake_deck = make_deck(n)
+            for card in hand:
+                fake_deck.remove(card)
+            if sum([card for card in fake_deck if card not in hand]) / len(fake_deck) > x: return("HIT")
+            else: return("STAY")
+
+        if sum([card for card in deck if card not in hand]) / len(deck) > x: return("HIT")
+        else: return("STAY")
+    return(f)
+
+
 def risk_thresh_with_memory(p):
     def f(deck, hand, goal, n, points):
         if len(deck.draw) == 0:
