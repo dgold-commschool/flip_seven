@@ -50,6 +50,9 @@ def solve(goal, n, max_hand_size, delta):
                         if score == goal:
                             evs[(score, hand, deck)] = 0
 
+                        elif score + sum(hand) >= goal:
+                            evs[(score, hand, deck)] = 1
+
                         elif hand_size == max_hand_size:
                             if sum(deck) == 0:
                                 diff = abs(get(evs, (score, hand, deck)) - (1 + get(evs, (score + sum(hand), (), tuple(range(1, n + 1))))))
