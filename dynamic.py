@@ -5,6 +5,7 @@
 """
 
 from itertools import *
+from flip_seven import *
 
 def get_all_hands(n, max_hand_size):
     hands = []
@@ -99,6 +100,17 @@ def solve(goal, n, max_hand_size, delta):
                             else:
                                 policy[(score, hand, deck)] = "Stay"
         print(nsims, max_delta)
-    return(evs[(0, (), tuple(range(1, n+1)))])
+    return(evs[(0, (), tuple(range(1, n+1)))], policy)
 
-print(solve(20, 6, 2, 1))
+def policy(policy_dict):
+    def f(deck, hand, goal, n, points):
+        new_deck = [len([k for k in deck.draw if k == i]) for i in range(1, n+1)]
+        if policy_dict[(points, tuple(sorted(hand)), tuple(new_deck))] == "Hit": return("HIT")
+        return("STAY")
+    return(f)
+
+if __name__ == "__main__":
+    ev, pol =solve(20, 4, MAX_HAND_SIZE, .0001)
+    optimal = Agent(policy(pol))
+    print(optimal.average_length(20, 4, 100000))
+    print(ev)

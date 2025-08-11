@@ -137,32 +137,35 @@ def risk_thresh_with_memory(p):
         else: return("STAY")
     return(f)
 
-cheater = Agent(cheat)
-singler = Agent(draw_x(1))
-doubler = Agent(draw_x(2))
-tripler = Agent(draw_x(3))
-chaos = Agent(random_move)
 
-#print(chaos.average_length(30,6, 100000))
-
-for thresh in range(2, 20):
-    avg = Agent(sum_thresh(thresh)).average_length(60, 6, 1000)
-    print("At threshhold of " + str(thresh) + ", on average " + str(avg) + " moves are required.")
-
-def optimal_thresh(goal, n, nsims):
-    best_avg = goal
-    best_thresh = -1
-    for thresh in range(2, sum(range(n))):
-        avg = Agent(sum_thresh(thresh)).average_length(goal, n, nsims)
-        if avg < best_avg:
-            best_avg = avg
-            best_thresh = thresh
-    return(best_thresh)
+if __name__ == "__main__":
     
-"""print(optimal_thresh(60, 6, 5000))
-print(optimal_thresh(200, 12, 100))
-print(Agent(sum_thresh(27)).average_length(200, 12, 1000))"""
+    cheater = Agent(cheat)
+    singler = Agent(draw_x(1))
+    doubler = Agent(draw_x(2))
+    tripler = Agent(draw_x(3))
+    chaos = Agent(random_move)
 
-for p_thresh in [i/100 for i in range(20, 40)]:
-    avg = Agent(risk_thresh_with_memory(p_thresh)).average_length(200, 12, 1000)
-    print("At risk threshhold of " + str(p_thresh) + ", on average " + str(avg) + " moves are required.")
+    #print(chaos.average_length(30,6, 100000))
+
+    for thresh in range(2, 20):
+        avg = Agent(sum_thresh(thresh)).average_length(60, 6, 1000)
+        print("At threshhold of " + str(thresh) + ", on average " + str(avg) + " moves are required.")
+
+    def optimal_thresh(goal, n, nsims):
+        best_avg = goal
+        best_thresh = -1
+        for thresh in range(2, sum(range(n))):
+            avg = Agent(sum_thresh(thresh)).average_length(goal, n, nsims)
+            if avg < best_avg:
+                best_avg = avg
+                best_thresh = thresh
+        return(best_thresh)
+        
+    """print(optimal_thresh(60, 6, 5000))
+    print(optimal_thresh(200, 12, 100))
+    print(Agent(sum_thresh(27)).average_length(200, 12, 1000))"""
+
+    for p_thresh in [i/100 for i in range(20, 40)]:
+        avg = Agent(risk_thresh_with_memory(p_thresh)).average_length(200, 12, 1000)
+        print("At risk threshhold of " + str(p_thresh) + ", on average " + str(avg) + " moves are required.")
