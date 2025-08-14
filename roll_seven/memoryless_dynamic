@@ -1,0 +1,84 @@
+""" Major Simplifying Assumption: Cards drawn with replacement.
+Equivalently, each turn corresponds to rolling an n-sided die with P[roll of n] proportional to n.
+"""
+
+from itertools import *
+import roll_seven
+def get_all_hands(n, max_hand_size):
+    hands = []
+    for hand_size in range(0, max_hand_size + 1):
+        hands = hands + [list(k) for k in combinations(range(1, n + 1), hand_size)]
+    return(hands)
+
+def get_all_states(goal, n, max_hand_size):
+    all_hands = get_all_hands(n, max_hand_size)
+    return([(score, tuple(hand)) for score in range(0, goal + 1) for hand in all_hands])
+
+def get(evs, state):
+    if state in evs:
+        return(evs[state])
+    else:
+        return(0)
+    
+def solve(goal, n, max_hand_size, max_bonus, delta):
+    states = get_all_states(goal, n, max_hand_size)
+    policy = {state: None for state in states}
+    evs = {state: goal for state in states}
+    max_delta = delta + 1
+    nsims = 0
+    while max_delta > delta and nsims < 100:
+        max_delta = 0
+        nsims += 1
+        for score in range(goal, -1, -1):
+            for hand_size in range(0, max_hand_size + 1):
+                for hand in [tuple(k) for k in combinations(range(1, n + 1), hand_size)]:
+                            
+                        if score == goal:
+                            evs[(score, hand)] = 0
+
+                        elif score + sum(hand) >= goal:
+                            evs[(score, hand)] = 1
+
+                        elif hand_size == max_hand_size:
+                            diff = abs(get(evs, (score, hand)) - (1 + get(evs, (score + sum(hand) + max_bonus, ()))))
+                            max_delta = max(diff, max_delta)
+                            evs[(score, hand)] = 1 + get(evs, (score + sum(hand) + max_bonus, ()))
+                            
+                        else:
+                            ev_if_hit = 0
+                            
+                            ev_if_stay = 1 + get(evs,(score + sum(hand), ()))
+                            for k in range(1, n + 1):
+                                if k in hand:
+                                    ev_if_hit += k * (1 + get(evs, (score, ())))
+                                else:
+                                    ev_if_hit += k * get(evs, (score, tuple(sorted(hand + tuple([k])))))
+                            ev_if_hit = ev_if_hit / sum(range(1, n + 1))
+
+                            if ev_if_hit == 0:
+                                quit()
+                                    
+                            diff = abs(evs[(score, hand)] - min(ev_if_hit, ev_if_stay))
+                            max_delta = max(diff, max_delta)
+                            
+                            evs[(score, hand)] = min(ev_if_hit, ev_if_stay)
+                            if ev_if_hit < ev_if_stay:
+                                policy[(score, hand)] = "Hit"
+                            else:
+                                policy[(score, hand)] = "Stay"
+        print(nsims, max_delta)
+    return(evs[(0, ())], policy)
+
+def policy(policy_dict):
+    def f(hand, goal, n, points, max_hand_size, max_bonus):
+        if policy_dict[(points, tuple(sorted(hand)))] == "Hit": return("HIT")
+        return("STAY")
+    return(f)
+
+if __name__ == "__main__":
+    roll_seven.LOG = False
+    ev, pol = solve(20, 4, 4, 10, .0001)
+    optimal = roll_seven.Agent(policy(pol))
+
+    print(optimal.average_length(20, 4, 100000, 4, 10))
+    print(ev)
