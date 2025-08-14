@@ -30,12 +30,12 @@ In addition, we consider two different modes for each game:
 
 # Questions
 
-For Solitaire Play:
+**For Solitaire Play:**
 - As a function of n, g, h, and b, what are the optimal policies for minimizing the expected number of turns needed?
     - How much do these policies differ between Flip 7 and Roll 7?
     - At what thresholds do the qualitative nature of policies change (eg. risky vs safe)?
 - Are there heuristic, easily implemented strategies that lead to approximately optimal play?
 - What values of h and b lead to the most "interesting" gameplay?
 
-For Competitive Play:
-- As a function of m, n, g, h, and b,What are the optimal policies for maximizing each player's probability of winning?
+**For Competitive Play:**
+- As a function of m, n, g, h, and b, what are the optimal policies for maximizing each player's probability of winning?
