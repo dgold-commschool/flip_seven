@@ -34,7 +34,7 @@ def get(evs, state):
     else:
         return(0)
     
-def solve(goal, n, max_hand_size, delta):
+def solve(goal, n, max_hand_size, max_bonus, delta):
     states = get_all_states(goal, n, max_hand_size)
     policy = {state: None for state in states}
     evs = {state: goal for state in states}
@@ -56,13 +56,13 @@ def solve(goal, n, max_hand_size, delta):
 
                         elif hand_size == max_hand_size:
                             if sum(deck) == 0:
-                                diff = abs(get(evs, (score, hand, deck)) - (1 + get(evs, (score + sum(hand), (), tuple(range(1, n + 1))))))
+                                diff = abs(get(evs, (score, hand, deck)) - (1 + get(evs, (score + sum(hand) + max_bonus, (), tuple(range(1, n + 1))))))
                                 max_delta = max(diff, max_delta)
-                                evs[(score, hand, deck)] = 1 + get(evs, (score + sum(hand), (), tuple(range(1, n + 1))))
+                                evs[(score, hand, deck)] = 1 + get(evs, (score + sum(hand) + max_bonus, (), tuple(range(1, n + 1))))
                             else:
-                                diff = abs(get(evs, (score, hand, deck)) - (1 + get(evs, (score + sum(hand), (), deck))))
+                                diff = abs(get(evs, (score, hand, deck)) - (1 + get(evs, (score + sum(hand)+ max_bonus, (), deck))))
                                 max_delta = max(diff, max_delta)
-                                evs[(score, hand, deck)] = 1 + get(evs, (score + sum(hand), (), deck))
+                                evs[(score, hand, deck)] = 1 + get(evs, (score + sum(hand)+ max_bonus, (), deck))
                             
                         else:
                             ev_if_hit = 0
@@ -99,7 +99,7 @@ def solve(goal, n, max_hand_size, delta):
                                 policy[(score, hand, deck)] = "Hit"
                             else:
                                 policy[(score, hand, deck)] = "Stay"
-        print(nsims, max_delta)
+        #print(nsims, max_delta)
     return(evs[(0, (), tuple(range(1, n+1)))], policy)
 
 def policy(policy_dict):
@@ -110,7 +110,6 @@ def policy(policy_dict):
     return(f)
 
 if __name__ == "__main__":
-    ev, pol =solve(20, 4, MAX_HAND_SIZE, .0001)
-    optimal = Agent(policy(pol))
-    print(optimal.average_length(20, 4, 100000))
-    print(ev)
+    for m in range(0, 31):
+        ev, pol = solve(30, 5, 3, m, .1)
+        print(m, ev)
